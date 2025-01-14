@@ -40,9 +40,11 @@ public:
     set<pair<int, int>> visited;                // keep track of visited states to prevent loops
     map<pair<int, int>, pair<int, int>> parent; // To keep track of the previous state
     pair<int, int> targetState;
+    int bfs_len;
 
     DFSSolver(int cap1, int cap2, int t) : capacity1(cap1), capacity2(cap2), target(t)
     {
+        bfs_len = 0;
         targetState = {-1, -1};
     }
 
@@ -92,6 +94,48 @@ public:
         }
 
         return res;
+    }
+
+    bool bfs()
+    {
+        queue<pair<int, int>> q;
+        pair<int, int> initialState = {0, 0};
+        parent.clear();
+        visited.clear();
+
+        q.push(initialState);
+        visited.insert(initialState);
+
+        int level = 0;
+        while (!q.empty())
+        {
+            int len = q.size();
+
+            for (int i = 0; i < len; i++)
+            {
+                pair<int, int> curr = q.front();
+                q.pop();
+
+                if (curr.second == target)
+                {
+                    targetState = curr;
+                    bfs_len = level;
+                    return true;
+                }
+
+                for (auto neighbour : nextStates(curr))
+                {
+                    if (visited.find(neighbour) == visited.end())
+                    {
+                        visited.insert(neighbour);
+                        parent[neighbour] = curr;
+                        q.push(neighbour);
+                    }
+                }
+            }
+            level++;
+        }
+        return false;
     }
 
     bool dfs()
@@ -180,17 +224,94 @@ public:
             }
             cout << "\n";
         }
+        cout << "Total Path Cost is:- " << path.size() - 1 << "\n";
+    }
+
+    void printSequenceBFS()
+    {
+        vector<pair<int, int>> path;
+        pair<int, int> curr = targetState;
+
+        int len = 0;
+
+        while (!(curr.first == 0 && curr.second == 0))
+        {
+            len++;
+            path.push_back(curr);
+            curr = parent[curr];
+        }
+
+        path.push_back({0, 0});
+        cout << "Solution exists and has " << len << " number of transitions\n";
+
+        for (int i = path.size() - 1; i >= 0; i--)
+        {
+            cout << "Step " << path.size() - i << ": ";
+            cout << "<" << path[i].first << "," << path[i].second << ">";
+
+            if (i < path.size() - 1)
+            {
+                pair<int, int> curr = path[i];
+                pair<int, int> prev = path[i + 1];
+
+                if (curr.first > prev.first && curr.second == prev.second)
+                {
+                    cout << " - Fill jug1";
+                }
+                else if (curr.second > prev.second && curr.first == prev.first)
+                {
+                    cout << " - Fill jug2";
+                }
+                else if (curr.first < prev.first && curr.second > prev.second)
+                {
+                    cout << " - Pour from jug1 to jug2";
+                }
+                else if (curr.first > prev.first && curr.second < prev.second)
+                {
+                    cout << " - Pour from jug2 to jug1";
+                }
+                else if (curr.first == 0 && prev.first > 0)
+                {
+                    cout << " - Empty jug1";
+                }
+                else if (curr.second == 0 && prev.second > 0)
+                {
+                    cout << " - Empty jug2";
+                }
+            }
+            cout << "\n";
+        }
+        cout << "Total Path Cost is:- " << bfs_len << "\n";
     }
 };
 
 int main()
 {
 
-    DFSSolver solver(9, 5, 3);
+    int jug1, jug2, target;
+    cout << "Enter the capacity of jug1:\n";
+    cin >> jug1;
+    cout << "Enter the capacity of jug2:\n";
+    cin >> jug2;
+    cout << "Enter the target volume in jug2:\n";
+    cin >> target;
 
+    DFSSolver solver(jug1, jug2, target);
+
+    cout << "DFS Solution\n";
     if (solver.dfs())
     {
         solver.printSequence();
+    }
+    else
+    {
+        cout << "No solution exists!\n";
+    }
+
+    cout << "BFS Solution\n";
+    if (solver.bfs())
+    {
+        solver.printSequenceBFS();
     }
     else
     {
