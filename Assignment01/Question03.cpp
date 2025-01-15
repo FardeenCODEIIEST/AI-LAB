@@ -178,18 +178,44 @@ void printBoard(const vector<vector<int>> &board)
     cout << "\n";
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    vector<vector<int>> initial = {
-        {1, 2, 3},
-        {8, 0, 4},
-        {7, 6, 5}};
+    vector<vector<int>> initial(3, vector<int>(3, 0));
+    vector<vector<int>> goal(3, vector<int>(3, 0));
 
-    vector<vector<int>> goal = {
-        {2, 8, 1},
-        {0, 4, 3},
-        {7, 6, 5}};
+    if (argc > 1)
+    {
+        cout << "Enter the values of cells in initial matrix\n";
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                cout << "Row " << i + 1 << " Column " << j + 1 << ": ";
+                cin >> initial[i][j];
+            }
+        }
+        cout << "Enter the values of cells in goal matrix\n";
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                cout << "Row " << i + 1 << " Column " << j + 1 << ": ";
+                cin >> goal[i][j];
+            }
+        }
+    }
+    else
+    {
+        initial = {
+            {1, 2, 3},
+            {8, 0, 4},
+            {7, 6, 5}};
 
+        goal = {
+            {2, 8, 1},
+            {0, 4, 3},
+            {7, 6, 5}};
+    }
     cout << "Initial State:\n";
     printBoard(initial);
     cout << "Goal State:\n";
