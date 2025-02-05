@@ -107,7 +107,7 @@ public:
                 vector<pair<int, int>> path;
                 double finalCost = current->g_cost;
 
-                while (current != nullptr)
+                while (current != NULL)
                 {
                     path.push_back({current->x, current->y});
                     current = current->parent;
