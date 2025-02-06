@@ -1,14 +1,8 @@
-#include <iostream>
-#include <vector>
-#include <queue>
-#include <cmath>
-#include <unordered_map>
-#include <sstream>
-#include <limits>
-#include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
 
+// Coordinate struct
 struct Coord
 {
     int x, y, z;
@@ -18,6 +12,7 @@ struct Coord
     }
 };
 
+// For hashing
 string makeKey(const Coord &coord, int mask)
 {
     ostringstream oss;
@@ -25,6 +20,7 @@ string makeKey(const Coord &coord, int mask)
     return oss.str();
 }
 
+// Node struct
 struct Node
 {
     Coord coord;        // current coordinate (x, y, z)
@@ -81,8 +77,8 @@ private:
         return best + bestToBase;
     }
 
-    // For free space ('0') cost is 1, fire ('F') cost is 3.
-    // Additionally, moving upward (dz = 1) adds +2, moving downward (dz = -1) adds +1.
+    // For free space cost is 1, fire cost is 3.
+    // Moving upward (dz = 1) adds +2, moving downward (dz = -1) adds +1.
     int getCost(char terrain, int dz_move)
     {
         int baseCost = (terrain == 'F' ? 3 : 1);
