@@ -164,6 +164,20 @@ public:
                 }
             }
         }
+
+        // Immediate threat from AI
+        for (int i = 0; i < COLS; i++)
+        {
+            if (!game.isColumnFull(i))
+            {
+                Connect4 newState = game;
+                newState.placePiece(i, AI);
+                if (newState.checkWin(AI))
+                {
+                    return 500;
+                }
+            }
+        }
         return 0;
     }
 
@@ -257,9 +271,11 @@ int main()
 {
     Connect4 game;
     MiniMaxSolver ai_agent;
-    int depth = 5; // Max depth of the game tree
+    int depth; // Max depth of the game tree
     cout << "Your symbol -> x\n";
     cout << "AI's symbol -> o\n";
+    cout << "Enter the depth of the Game Tree: ";
+    cin >> depth;
     while (true)
     {
         game.printBoard();
@@ -305,104 +321,3 @@ int main()
     }
     return 0;
 }
-
-/*
-
-// Add these helper functions to your MiniMaxSolver class
-
-// Evaluate a window of 4 cells and return a score for it.
-int evaluateWindow(const vector<int>& window) {
-    int score = 0;
-    int countAI = 0, countPlayer = 0, countEmpty = 0;
-    for (int cell : window) {
-        if (cell == AI)
-            countAI++;
-        else if (cell == PLAYER)
-            countPlayer++;
-        else
-            countEmpty++;
-    }
-
-    // Scoring for AI pieces in the window.
-    if (countAI == 4)
-        score += 100;
-    else if (countAI == 3 && countEmpty == 1)
-        score += 10;
-    else if (countAI == 2 && countEmpty == 2)
-        score += 5;
-
-    // If the player is about to win, heavily penalize the score.
-    if (countPlayer == 3 && countEmpty == 1)
-        score -= 80;
-    else if (countPlayer == 2 && countEmpty == 2)
-        score -= 20;
-
-    return score;
-}
-
-// Revised evaluation function for non-terminal board states.
-int evaluateBoard(Connect4 &game) {
-    // Check for terminal states first.
-    if (game.checkWin(AI))
-        return 100000;
-    else if (game.checkWin(PLAYER))
-        return -100000;
-
-    int score = 0;
-
-    // Prioritize center column control.
-    int centerCol = COLS / 2;
-    int centerCount = 0;
-    for (int i = 0; i < ROWS; i++) {
-        if (game.board[i][centerCol] == AI)
-            centerCount++;
-    }
-    score += centerCount * 6;  // weight the center count
-
-    // Evaluate horizontal windows.
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS - 3; j++) {
-            vector<int> window;
-            for (int k = 0; k < 4; k++) {
-                window.push_back(game.board[i][j+k]);
-            }
-            score += evaluateWindow(window);
-        }
-    }
-
-    // Evaluate vertical windows.
-    for (int j = 0; j < COLS; j++) {
-        for (int i = 0; i < ROWS - 3; i++) {
-            vector<int> window;
-            for (int k = 0; k < 4; k++) {
-                window.push_back(game.board[i+k][j]);
-            }
-            score += evaluateWindow(window);
-        }
-    }
-
-    // Evaluate positively sloped diagonal windows.
-    for (int i = 0; i < ROWS - 3; i++) {
-        for (int j = 0; j < COLS - 3; j++) {
-            vector<int> window;
-            for (int k = 0; k < 4; k++) {
-                window.push_back(game.board[i+k][j+k]);
-            }
-            score += evaluateWindow(window);
-        }
-    }
-
-    // Evaluate negatively sloped diagonal windows.
-    for (int i = 0; i < ROWS - 3; i++) {
-        for (int j = 3; j < COLS; j++) {
-            vector<int> window;
-            for (int k = 0; k < 4; k++) {
-                window.push_back(game.board[i+k][j-k]);
-            }
-            score += evaluateWindow(window);
-        }
-    }
-
-    return score;
-}
-*/
