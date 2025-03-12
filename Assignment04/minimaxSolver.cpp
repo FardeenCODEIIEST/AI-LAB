@@ -142,6 +142,9 @@ public:
     int evaluateBoard(Connect4 &game)
     {
         // Evaluation of terminal nodes in the game tree
+        /*
+            TODO -> Can be optimized to improve the optimality of action
+        */
         if (game.checkWin(AI))
         {
             return 1000;
